@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/config/database";
 import Blog from "@/models/BlogModel";
+import "@/models/UserModel";
 
 // @desc    Get all blogs
 // @route   GET /api/blogs
@@ -13,11 +14,11 @@ export async function GET(request, { params }) {
 
     let blogs;
     if (status === "pending") {
-      blogs = await Blog.find({ status: "pending" });
+      blogs = await Blog.find({ status: "pending" }).populate("user");
     } else if (status === "accepted") {
-      blogs = await Blog.find({ status: "accepted" });
+      blogs = await Blog.find({ status: "accepted" }).populate("user");
     } else {
-      blogs = await Blog.find();
+      blogs = await Blog.find().populate("user");
     }
     return NextResponse.json(blogs, { status: 200 });
   } catch (err) {
