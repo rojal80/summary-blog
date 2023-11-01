@@ -13,7 +13,7 @@ export async function GET(request, { params }) {
     const email = searchParams.get("email");
 
     if (email) {
-      const user = await User.findOne({ email });
+      const user = await User.find({ email });
       return NextResponse.json(user, { status: 200 });
     } else {
       const user = await User.find();
