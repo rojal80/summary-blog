@@ -6,8 +6,8 @@ import { useContext } from "react";
 export default function Posts() {
   const { pendingPosts, changeStatus } = useContext(BlogContext);
 
-  //for turncating long paragraph
-  function turncateSentence(description, maxWords) {
+  // For truncating long paragraphs
+  function truncateSentence(description, maxWords) {
     const words = description.split(" ");
     if (words.length > maxWords) {
       const truncatedWords = words.slice(0, maxWords);
@@ -19,27 +19,27 @@ export default function Posts() {
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">Blog Posts</h1>
-      <table className="table-auto w-full">
+      <table className="table-fixed w-full">
         <thead>
           <tr className="text-left">
-            <th className="px-4 py-2">Title</th>
-            <th className="px-4 py-2">Description</th>
-            <th className="px-4 py-2">User</th>
-            <th className="px-4 py-2">Action</th>
+            <th className="w-1/4 px-4 py-2">Title</th>
+            <th className="w-2/4 px-4 py-2">Description</th>
+            <th className="w-1/4 px-4 py-2">User</th>
+            <th className="w-1/4 px-4 py-2">Action</th>
           </tr>
         </thead>
         <tbody>
           {pendingPosts.map((post) => (
             <tr key={post._id}>
-              <td className="border px-4 py-2">
-                {turncateSentence(post.title, 5)}
+              <td className="w-1/4 border px-4 py-2">
+                {truncateSentence(post.title, 5)}
               </td>
-              <td className="border px-4 py-2">
-                {turncateSentence(post.description, 10)}
+              <td className="w-2/4 border px-4 py-2">
+                {truncateSentence(post.description, 10)}
               </td>
-              <td className="border px-4 py-2">{post.user.name}</td>
-              <td>
-                <Link href={`/admin/posts/${post._id}`}>view</Link>|
+              <td className="w-1/4 border px-4 py-2">{post.user.name}</td>
+              <td className="w-1/4 border">
+                <Link href={`/admin/posts/${post._id}`}>view</Link> |
                 <button
                   className="text-green-600"
                   onClick={() => {
