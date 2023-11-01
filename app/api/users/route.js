@@ -3,7 +3,8 @@ import connectDB from "@/config/database";
 import User from "@/models/UserModel";
 
 // @desc    Get all users
-// @route   GET /api/users
+// @desc    Get one user by email ?email=..
+// @route   GET /api/users?email=
 export async function GET(request, { params }) {
   try {
     await connectDB();
@@ -12,7 +13,7 @@ export async function GET(request, { params }) {
     const email = searchParams.get("email");
 
     if (email) {
-      const user = await User.find({ email });
+      const user = await User.findOne({ email });
       return NextResponse.json(user, { status: 200 });
     } else {
       const user = await User.find();
