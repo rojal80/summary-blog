@@ -1,51 +1,67 @@
 "use client";
 import BlogContext from "@/components/context/BlogContext";
+import Link from "next/link";
 import { useContext } from "react";
 
-export default function page() {
-   const { pendingPosts, changeStatus } = useContext(BlogContext);
+export default function Posts() {
+  const { pendingPosts, changeStatus } = useContext(BlogContext);
 
-   return (
-      <div className="container mx-auto">
-         <h1 className="text-3xl font-bold mb-4">Blog Posts</h1>
-         <table className="table-auto w-full">
-            <thead>
-               <tr className="text-left">
-                  <th className="px-4 py-2">Title</th>
-                  <th className="px-4 py-2">Description</th>
-                  <th className="px-4 py-2">User</th>
-                  <th className="px-4 py-2">Action</th>
-               </tr>
-            </thead>
-            <tbody>
-               {pendingPosts.map((post) => (
-                  <tr key={post._id}>
-                     <td className="border px-4 py-2">{post.title}</td>
-                     <td className="border px-4 py-2">{post.description}</td>
-                     <td className="border px-4 py-2">{post.user}</td>
-                     <td>
-                        <button
-                           className="text-green-600"
-                           onClick={() => {
-                              changeStatus(post._id, "accepted");
-                           }}
-                        >
-                           accept
-                        </button>{" "}
-                        |{" "}
-                        <button
-                           className="text-red-600"
-                           onClick={() => {
-                              changeStatus(post._id, "rejected");
-                           }}
-                        >
-                           reject
-                        </button>
-                     </td>
-                  </tr>
-               ))}
-            </tbody>
-         </table>
-      </div>
-   );
+  //for turncating long paragraph
+  function turncateSentence(description, maxWords) {
+    const words = description.split(" ");
+    if (words.length > maxWords) {
+      const truncatedWords = words.slice(0, maxWords);
+      return truncatedWords.join(" ") + " ...";
+    }
+    return description;
+  }
+
+  return (
+    <div className="container mx-auto">
+      <h1 className="text-3xl font-bold mb-4">Blog Posts</h1>
+      <table className="table-auto w-full">
+        <thead>
+          <tr className="text-left">
+            <th className="px-4 py-2">Title</th>
+            <th className="px-4 py-2">Description</th>
+            <th className="px-4 py-2">User</th>
+            <th className="px-4 py-2">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pendingPosts.map((post) => (
+            <tr key={post._id}>
+              <td className="border px-4 py-2">
+                {turncateSentence(post.title, 5)}
+              </td>
+              <td className="border px-4 py-2">
+                {turncateSentence(post.description, 10)}
+              </td>
+              <td className="border px-4 py-2">{post.user.name}</td>
+              <td>
+                <Link href={`/admin/posts/${post._id}`}>view</Link>|
+                <button
+                  className="text-green-600"
+                  onClick={() => {
+                    changeStatus(post._id, "accepted");
+                  }}
+                >
+                  accept
+                </button>{" "}
+                |{" "}
+                <button
+                  className="text-red-600"
+                  onClick={() => {
+                    changeStatus(post._id, "rejected");
+                  }}
+                >
+                  reject
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
