@@ -9,7 +9,16 @@ import { NextResponse } from "next/server";
 export async function GET(request, { params: { id } }) {
   try {
     await connectDB();
-    const savedBlog = await SavePost.find({ user: id }).populate("user blog");
+    const savedBlog = await SavePost.find({ user: id })
+      .populate({
+        path: "user",
+      })
+      .populate({
+        path: "blog",
+        populate: {
+          path: "user",
+        },
+      });
     return NextResponse.json(savedBlog, { status: 200 });
   } catch (err) {
     console.log(err);
