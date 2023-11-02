@@ -11,7 +11,7 @@ export async function POST(request) {
     const data = await request.json();
     console.log(data);
     const saveBlog = await SavePost.create(data);
-    return NextResponse.json(res, { status: 201 });
+    return NextResponse.json(saveBlog, { status: 201 });
   } catch (err) {
     console.log(err);
   }
