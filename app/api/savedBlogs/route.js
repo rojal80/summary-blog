@@ -9,9 +9,14 @@ export async function POST(request) {
     console.log("saved blog");
     await connectDB();
     const data = await request.json();
-    console.log(data);
-    const saveBlog = await SavePost.create(data);
-    return NextResponse.json(saveBlog, { status: 201 });
+    const savedBlog = await SavePost.find({ blog: data.blog });
+    if (savedBlog.length > 0) {
+      const response = await SavePost.deleteOne({ blog: data.blog });
+      return NextResponse.json(response, { status: 200 });
+    } else {
+      const response = await SavePost.create(data);
+      return NextResponse.json(response, { status: 201 });
+    }
   } catch (err) {
     console.log(err);
   }
