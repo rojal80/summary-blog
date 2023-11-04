@@ -8,7 +8,7 @@ export default function binarySearch(sortedData, name) {
       currentName = currentName.toLowerCase();
 
       if (currentName === name) {
-         return sortedData[mid];
+         return [sortedData[mid]];
       } else if (currentName < name) {
          left = mid + 1;
       } else {
@@ -18,16 +18,3 @@ export default function binarySearch(sortedData, name) {
 
    return null; // Name not found in the sorted data
 }
-
-// Name to search for
-// const nameToSearch = "Nischal Kadariya"; // Replace with the name you want to search
-
-// // Perform binary search
-// const result = binarySearch(sortedData, nameToSearch);
-
-// // Check if the name was found
-// if (result) {
-//    console.log("Found:", result);
-// } else {
-//    console.log("Name not found in the sorted data.");
-// }

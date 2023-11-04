@@ -23,8 +23,7 @@ export default function Posts() {
       e.preventDefault();
       if (search === "") return setSearchResult(pendingPosts);
       result = binarySearch(pendingPosts, search.toLowerCase());
-      if (result) setSearchResult([result]);
-      else setSearchResult([]);
+      setSearchResult(result || []);
    };
 
    // For truncating long paragraphs
