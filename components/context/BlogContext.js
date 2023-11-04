@@ -2,88 +2,94 @@
 import { createContext, useReducer, useEffect } from "react";
 import FarmReducer from "./Reducer";
 
+import mergeSort from "@/algorithms/mergeSort";
+
 const BlogContext = createContext();
 
 function BlogContextProvider({ children }) {
-  const initialValues = {
-    pendingPosts: [],
-    posts: [],
-    users: [],
-  };
+   const initialValues = {
+      pendingPosts: [],
+      posts: [],
+      users: [],
+   };
 
-  //for managing global state
-  const [state, dispatch] = useReducer(FarmReducer, initialValues);
+   //for managing global state
+   const [state, dispatch] = useReducer(FarmReducer, initialValues);
 
-  //fetches post that is still in pending state
-  const fetchPendingPosts = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?status=pending`
-      );
-      const pendingPosts = await res.json();
-      dispatch({ type: "MANAGE_PENDING_POSTS", payload: pendingPosts });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+   //fetches post that is still in pending state
+   const fetchPendingPosts = async () => {
+      try {
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?status=pending`
+         );
+         //soring algorithm is called here
+         const pendingPosts = mergeSort(await res.json());
 
-  //fetch number of posts
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?status=accepted`
-      );
-      const posts = await res.json();
-      dispatch({ type: "MANAGE_POSTS", payload: posts });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+         dispatch({ type: "MANAGE_PENDING_POSTS", payload: pendingPosts });
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
-  //fetches all the users
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/users`);
-      const users = await res.json();
-      dispatch({ type: "MANAGE_USERS", payload: users });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+   //fetch number of posts
+   const fetchPosts = async () => {
+      try {
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?status=accepted`
+         );
+         const posts = await res.json();
+         dispatch({ type: "MANAGE_POSTS", payload: posts });
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
-  //accept or reject post
-  const changeStatus = async (id, status) => {
-    try {
-      console.log(id, status);
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status }),
-        }
-      );
-      if (res.status === 200) fetchPendingPosts();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+   //fetches all the users
+   const fetchUsers = async () => {
+      try {
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/users`
+         );
+         const users = await res.json();
+         dispatch({ type: "MANAGE_USERS", payload: users });
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
-  useEffect(() => {
-    fetchPendingPosts();
-    fetchUsers();
-    fetchPosts();
-  }, []);
+   //accept or reject post
+   const changeStatus = async (id, status) => {
+      try {
+         console.log(id, status);
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${id}`,
+            {
+               method: "PUT",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ status }),
+            }
+         );
+         if (res.status === 200) fetchPendingPosts();
+      } catch (err) {
+         console.log(err);
+      }
+   };
 
-  return (
-    <BlogContext.Provider
-      value={{ ...state, fetchPendingPosts, fetchUsers, changeStatus }}
-    >
-      {children}
-    </BlogContext.Provider>
-  );
+   useEffect(() => {
+      fetchPendingPosts();
+      fetchUsers();
+      fetchPosts();
+   }, []);
+
+   return (
+      <BlogContext.Provider
+         value={{ ...state, fetchPendingPosts, fetchUsers, changeStatus }}
+      >
+         {children}
+      </BlogContext.Provider>
+   );
 }
 
 export default BlogContext;
