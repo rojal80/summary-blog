@@ -2,6 +2,7 @@ import connectDB from "@/config/database";
 import { NextResponse } from "next/server";
 import Blog from "@/models/BlogModel";
 import "@/models/UserModel";
+import { headers } from "next/headers";
 
 //@desc    Get the blog based on the blog id and user id
 //@route   GET /api/blogs/:id
@@ -28,7 +29,7 @@ export async function GET(request, { params }) {
 }
 
 //@desc    update blog  based on the blog id
-//@route   PUT /api/blogs/:id?like=true
+//@route   PUT /api/blogs/:id?likes=increase
 export async function PUT(request, { params }) {
   try {
     await connectDB();
@@ -36,29 +37,36 @@ export async function PUT(request, { params }) {
     //fetching parameter from the url ?id=123 (query parameter)
     const { searchParams } = new URL(request.url);
     const like = searchParams.get("likes");
+    const headersList = headers();
+
+    const authorization = headersList.get("authorization");
 
     let response;
 
     //increaseing and decreasing the likes, it wont need the data in the body
     //in the query parameter pass likes=increase or likes=decrease
     if (like === "increase") {
-      response = await Blog.findByIdAndUpdate(
+      // Add the user's authorization ID to the "likes" array
+      const updatedBlog = await Blog.findByIdAndUpdate(
         id,
-        { $inc: { likes: 1 } },
+        { $addToSet: { likes: authorization } }, // $addToSet adds only if not already present
         {
           new: true,
           runValidators: true,
         }
       );
+      response = updatedBlog;
     } else if (like === "decrease") {
-      response = await Blog.findByIdAndUpdate(
+      // Remove the user's authorization ID from the "likes" array
+      const updatedBlog = await Blog.findByIdAndUpdate(
         id,
-        { $inc: { likes: -1 } },
+        { $pull: { likes: authorization } }, // $pull removes the specified element from the array
         {
           new: true,
           runValidators: true,
         }
       );
+      response = updatedBlog;
     } else {
       //this condition is for updating the blog so we need to pass the data in the body
       const data = await request.json();
