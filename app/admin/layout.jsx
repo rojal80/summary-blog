@@ -18,13 +18,15 @@ export default async function RootLayout({ children }) {
    return (
       <html lang="en">
          <body className="">
-            <div className="flex flex-1 min-h-screen">
-               <div className="w-1/5 h-screen ">
-                  <Sidebar />
-               </div>
-               <div className="flex-1">
-                  <Header />
-                  <main className="bg-slate-100  h-screen">{children}</main>
+            <div>
+               <div className="flex flex-1 min-h-screen">
+                  <div className="w-1/5 h-screen ">
+                     <Sidebar />
+                  </div>
+                  <div className="flex-1">
+                     <Header />
+                     <main className="bg-slate-100  h-screen">{children}</main>
+                  </div>
                </div>
             </div>
          </body>
